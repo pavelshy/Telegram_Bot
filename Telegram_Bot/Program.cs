@@ -7,40 +7,17 @@ using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Telegram_Bot    // How I can send message ?
-{
-    struct BotUpdate
-    {
-        public string text;
-        public long id;
-        public string? username;
-        public string? firstname;
-        public DateTime? forwarddate; // forwarddate : null
-    }
-    
+
+namespace Telegram_Bot    
+{   
     class Program
     {
         static TelegramBotClient bot = new TelegramBotClient("5136381645:AAHMR6kHnYnhYUEPDV93qok88W_KPnb3AVA");
-        static string fileName = "/Users/pavelshymko/Documents/NetFramework/Telegram_Bot/updates.json";
-        static List<BotUpdate> botUpdates = new List<BotUpdate>();
         
-
         static void Main(string[] args)
         {
-            
-            // read all saved files
-            try
-            {
-                var botUpdatesString = System.IO.File.ReadAllText(fileName);
-
-                botUpdates = JsonConvert.DeserializeObject<List<BotUpdate>>(botUpdatesString) ??
-                    botUpdates;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"Error reading or desearializing {ex}");
-            }
             var receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new UpdateType[]
@@ -66,24 +43,22 @@ namespace Telegram_Bot    // How I can send message ?
             {
                 if(update.Message.Type == MessageType.Text)
                 {
-                    //write an update
-                    var _botUpdate = new BotUpdate
+                    var message = update.Message;
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new[]
                     {
-                        text = update.Message.Text,
-                        id = update.Message.Chat.Id,
-                        username = update.Message.Chat.Username,
-                        firstname = update.Message.Chat.FirstName,
-                        forwarddate = update.Message.ForwardDate
+                        new KeyboardButton[] { "USD/PLN", "PLN/USD" },
+                    }
+                        )
+                    {
+                        ResizeKeyboard = true
                     };
 
-                    botUpdates.Add(_botUpdate);
-
-                    var botUpdatesString = JsonConvert.SerializeObject(botUpdates);
-
-                    System.IO.File.WriteAllText(fileName, botUpdatesString);
+                    await bot.SendTextMessageAsync(message.Chat.Id, "Choose a USD",replyMarkup: replyKeyboardMarkup);
                 }
-            }  
+            }
         }
+
+       
     }
 }
 
