@@ -39,27 +39,36 @@ namespace Telegram_Bot
 
         private static async Task updateHandel(ITelegramBotClient bot, Update update, CancellationToken arg3)
         {
-          if(update.Type == UpdateType.Message)
-            {
-                if(update.Message.Type == MessageType.Text)
-                {
-                    
-                    
+          
                     var message = update.Message;
-                    await bot.SendTextMessageAsync(message.Chat.Id, "Check live foreign currency exchange rates");
+
                     ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new []
                     {
                         new KeyboardButton[] { "USD/PLN", "PLN/USD" },
-                    }
-                        )
+                    })
                     {
                         ResizeKeyboard = true
                     };
 
-                    await bot.SendTextMessageAsync(message.Chat.Id, "Select exchange currency", replyMarkup: replyKeyboardMarkup);
-                }
-            }
-        }
+                    await bot.SendTextMessageAsync(message.Chat.Id, "Check live foreign currency exchange rates. Select exchange currency:", replyMarkup: replyKeyboardMarkup);
+
+                    switch (message.Text)
+                    {
+                        case "USD/PLN":
+                            await bot.SendTextMessageAsync(message.Chat.Id, "USD/PLN - US Dollar Polish Zloty: 4.2914");
+                            break;
+                        case "PLN/USD":
+                            await bot.SendTextMessageAsync(message.Chat.Id, "PLN/USD - Polish Zloty US Dollar: 4.2887");
+                            break;
+                        default:
+                            await bot.SendTextMessageAsync(message.Chat.Id, "Select exchange currency:");
+                            break;
+                    }
+
+
+
+                
+        } 
 
        
     }
