@@ -43,8 +43,11 @@ namespace Telegram_Bot
             {
                 if(update.Message.Type == MessageType.Text)
                 {
+                    
+                    
                     var message = update.Message;
-                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new[]
+                    await bot.SendTextMessageAsync(message.Chat.Id, "Check live foreign currency exchange rates");
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new []
                     {
                         new KeyboardButton[] { "USD/PLN", "PLN/USD" },
                     }
@@ -53,7 +56,7 @@ namespace Telegram_Bot
                         ResizeKeyboard = true
                     };
 
-                    await bot.SendTextMessageAsync(message.Chat.Id, "Choose a USD",replyMarkup: replyKeyboardMarkup);
+                    await bot.SendTextMessageAsync(message.Chat.Id, "Select exchange currency", replyMarkup: replyKeyboardMarkup);
                 }
             }
         }
