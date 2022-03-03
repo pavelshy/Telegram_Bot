@@ -26,13 +26,8 @@ namespace Telegram_Bot
                 var result = client.GetAsync(endpoint).Result;
                 var json = result.Content.ReadAsStringAsync().Result;
                 var jsonDeserialize = System.Text.Json.JsonSerializer.Deserialize<Exchange>(json);
-                Console.WriteLine(jsonDeserialize.rates.EURPLN);
-                Console.WriteLine(jsonDeserialize.rates.EURUSD);
-
-
             }
-            
-            
+
             var receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new UpdateType[]
@@ -73,7 +68,7 @@ namespace Telegram_Bot
                     switch (message.Text)
                     {
                         case "Convert EUR/USD":
-                            await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to USD - Convert Euros to US Dollars : 1.1");
+                            await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to USD - Convert Euros to US Dollars : 4.1");
                             break;
                         case "Convert EUR/PLN":
                             await bot.SendTextMessageAsync(message.Chat.Id, "1 EUR to PLN - Convert Euros to Polish Zlotych: 4.7");
