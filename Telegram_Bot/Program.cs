@@ -24,8 +24,6 @@ namespace Telegram_Bot
 
         static void Main(string[] args)
         {
-            
-
             var receiverOptions = new ReceiverOptions
             {
                 AllowedUpdates = new UpdateType[]
@@ -47,29 +45,15 @@ namespace Telegram_Bot
 
         private static async Task updateHandel(ITelegramBotClient bot, Update update, CancellationToken arg3)
         {
- 
             var message = update.Message;
-
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new []
-            {
-                   new KeyboardButton[] { "Convert EUR/USD", "Convert EUR/PLN" },
-            })
-            {
-                   ResizeKeyboard = true
-
-            };
-
-            await bot.SendTextMessageAsync(message.Chat.Id, "Check live foreign currency exchange rates:", replyMarkup: replyKeyboardMarkup);
+            string path = $"/Users/pavelshymko/Documents/NetFramework/Telegram_Bot/{DateTime.Today.ToString("ddMMyyyy")}.json";
 
             var client = new HttpClient();
             var endpoint = new Uri("http://api.exchangeratesapi.io/v1/latest?access_key=0f10eb34fd242a0c0e0025707136b73d&symbols=USD,PLN&format=1");
             var result = client.GetAsync(endpoint).Result;
             var json = result.Content.ReadAsStringAsync().Result;
             var jsonDeserialize = System.Text.Json.JsonSerializer.Deserialize<Exchange>(json);
-
             
-            string path = $"/Users/pavelshymko/Documents/NetFramework/Telegram_Bot/{DateTime.Today.ToString("ddMMyyyy")}.json";
-
             try
             {
                 System.IO.File.WriteAllText(path, json);
@@ -79,22 +63,29 @@ namespace Telegram_Bot
                 Console.WriteLine($"Error writing: {ex}");
             }
 
+            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(new[]
+            {
+                   new KeyboardButton[] { "Convert EUR/USD", "Convert EUR/PLN"},
+            })
+            {
+                ResizeKeyboard = true
+
+            };
+
+            await bot.SendTextMessageAsync(message.Chat.Id, "Check live foreign currency exchange rates:", replyMarkup: replyKeyboardMarkup);
+
             switch (message.Text)
-                    {
-                        case "Convert EUR/USD":
-                            await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to USD: {jsonDeserialize.rates.EURUSD} \nDate: {jsonDeserialize.date}");
-                            break;
-                        case "Convert EUR/PLN":
-                            await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to PLN: {jsonDeserialize.rates.EURPLN} \nDate: {jsonDeserialize.date}");
-                            break;
-                case "af-af":
-                    
-                    await bot.SendStickerAsync(message.Chat.Id,sticker: "https://github.com/TelegramBots/book/raw/master/src/docs/sticker-fred.webp");
+            {
+                case "Convert EUR/USD":
+                await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to USD: {jsonDeserialize.rates.EURUSD} \nDate: {jsonDeserialize.date}");
+                    break;
+                case "Convert EUR/PLN":
+                await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to PLN: {jsonDeserialize.rates.EURPLN} \nDate: {jsonDeserialize.date}");
                     break;
                 default:
-                            await bot.SendTextMessageAsync(message.Chat.Id, $"Select exchange currency:");
-                            break;
-                    }
+                await bot.SendTextMessageAsync(message.Chat.Id, $"Select exchange currency:");
+                    break;
+            }
         }
     }
     public class Exchange
