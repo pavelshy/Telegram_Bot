@@ -33,17 +33,17 @@ namespace Telegram_Bot
                 }
             };
 
-            bot.StartReceiving(updateHandel, errorHandler, receiverOptions);
+            bot.StartReceiving(UpdateHandel, ErrorHandler, receiverOptions);
 
             Console.ReadKey();
         }
 
-        private static Task errorHandler(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
+        private static Task ErrorHandler(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
         {
             throw new NotImplementedException();
         }
 
-        private static async Task updateHandel(ITelegramBotClient bot, Update update, CancellationToken arg3)
+        private static async Task UpdateHandel(ITelegramBotClient bot, Update update, CancellationToken arg3)
         {
             var message = update.Message;
             string path = $"/Users/pavelshymko/Documents/NetFramework/Telegram_Bot/{DateTime.Today.ToString("ddMMyyyy")}.json";
@@ -77,13 +77,19 @@ namespace Telegram_Bot
             switch (message.Text)
             {
                 case "Convert EUR/USD":
-                await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to USD: {jsonDeserialize.rates.EURUSD} \nDate: {jsonDeserialize.date}");
+                    await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to USD: {jsonDeserialize.rates.EURUSD} \nDate: {jsonDeserialize.date}");
+                    var enterAmount = await bot.SendTextMessageAsync(message.Chat.Id, "Enter amount EUR: ");
+                    
+
+                    // double sumConvertEURUSD = jsonDeserialize.rates.EURUSD * jsonDeserialize.rates.EURUSD;
+                    // await bot.SendTextMessageAsync(message.Chat.Id, $"Convert:{sumConvertEURUSD}");
+                    
                     break;
                 case "Convert EUR/PLN":
-                await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to PLN: {jsonDeserialize.rates.EURPLN} \nDate: {jsonDeserialize.date}");
+                    await bot.SendTextMessageAsync(message.Chat.Id, $"1 EUR to PLN: {jsonDeserialize.rates.EURPLN} \nDate: {jsonDeserialize.date}");
                     break;
                 default:
-                await bot.SendTextMessageAsync(message.Chat.Id, $"Select exchange currency:");
+                    await bot.SendTextMessageAsync(message.Chat.Id, $"Select exchange currency:");
                     break;
             }
         }
